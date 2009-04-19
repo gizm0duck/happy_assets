@@ -1,13 +1,75 @@
 HappyAssets
 ===========
 
-Introduction goes here.
+Asset packing that allows you to group files together to form different packages for various uses, such as a 
+javascript package for admin sections and customer facing, or maybe a group that is only used in a particular 
+controller.
 
+The package contains to rake tasks that allow you to pack and unpack the javascripts on the fly, so you can push out 
+js or css fixes and package them up without having to bring down the server.  Also, you can unpack the code in production
+for debugging purposes, all without having to push any code changes or bring down the site.
 
 Example
 =======
 
-Example goes here.
+  To create an initial config file from the files you currently have in your public directory run:
+  >> rake happy_assets:initialize
+
+  You can have an indefinite number of packages within each section (js or css).  A sample config file is below:
+
+  ** SAMPLE **
+  css:
+    default:
+    - base.css
+    - ie_fixes.css
+  
+    admin:
+    - admin.css
+    - admin_ie_fixes.css
+
+  js: 
+    jquery: 
+    - jquery-1.2.6.js
+    - jquery_no_conflict.js
+    - jquery_compat.js
+    - jquery_dimensions.js
+  
+    default:
+    - foo.js
+    - boo.js
+    - zoo.js
+
+
+
+  To create the packaged files outlined in config/happy_assets.yml run:
+  >> rake happy_assets:pack
+
+  To remove the packaged version and return to loading the files individually run:
+  >> rake happy_assets:unpack
+
+  Usage Information
+
+    In your layout file there are 2 helpers to utilize the packages.  One is for js, and the other is for css, but 
+    their usage is the exact same.
+
+    <%= packaged_javascript_include :jquery, :default %>
+
+      When you have not created the packages will render:
+        <script src="/javascripts/jquery-1.2.6.js?1240106575" type="text/javascript"></script>
+        <script src="/javascripts/jquery_no_conflict.js?1240106575" type="text/javascript"></script>
+        <script src="/javascripts/jquery_compat.js?1240106575" type="text/javascript"></script>
+        <script src="/javascripts/jquery_dimensions.js?1240106575" type="text/javascript"></script>
+        <script src="/javascripts/foo.js?1240106575" type="text/javascript"></script>
+        <script src="/javascripts/boo.js?1240106575" type="text/javascript"></script>
+        <script src="/javascripts/zoo.js?1240106575" type="text/javascript"></script>
+
+      When you have created the packed files will render
+        <script src="/javascripts/packaged_jquery.js?1240177021" type="text/javascript"></script>
+        <script src="/javascripts/packaged_default.js?1240177021" type="text/javascript"></script>
+      
+      
+    The css equivelant is:
+      <%= packaged_stylesheet_include :default, :admin %>
 
 
 Copyright (c) 2009 Shane Wolf, released under the MIT license
